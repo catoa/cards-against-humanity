@@ -1,26 +1,56 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react'
+import { connect } from 'react-redux'
+import { addCard } from './store'
+import CardGroup from './components/CardGroup'
+import './App.css'
 
-function App() {
+const mapDispatchToProps = (dispatch) => ({
+  dispatch,
+  addCard,
+})
+
+function App({ dispatch, addCard }) {
+  const [cardText, setCardText] = useState('')
+  const [isPrompt, setIsPrompt] = useState(false)
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+      <main>
+        <CardGroup />
+        <input
+          type="text"
+          value={cardText}
+          onChange={(event) => setCardText(event.target.value)}
+        />
+        <br />
+        <span>
+          <input
+            type="checkbox"
+            value={isPrompt}
+            onClick={() => setIsPrompt(!isPrompt)}
+          />
+          Prompt Card
+        </span>
+        <br />
+        <button
+          onClick={() => {
+            let trimmedText = cardText.trim()
+            if (trimmedText.length > 0) {
+              dispatch(
+                addCard({
+                  text: trimmedText,
+                  type: isPrompt ? 'black' : 'white',
+                })
+              )
+              setCardText('')
+            }
+          }}
         >
-          Learn React
-        </a>
-      </header>
+          Add
+        </button>
+      </main>
     </div>
-  );
+  )
 }
 
-export default App;
+export default connect(null, mapDispatchToProps)(App)
